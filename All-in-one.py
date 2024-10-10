@@ -37,8 +37,11 @@ else:
 
 HOSTNAME = "hci"
 IP_ADDRESS = "192.168.249.103"
+NETMASK="255.255.255.0"
 INTERFACE_01 = "eno1"
 INTERFACE_02 = "eno2"
+GATEWAY="192.168.249.1"
+DNS_SERVERS="8.8.8.8 8.8.4.4"
 ROOT_USER_PASSWORD = "pinaka"
 
 # Function to download and run a shell script
@@ -51,13 +54,14 @@ def run_script(url, marker_path):
             print(f"Failed to download {url}: {result.stderr}")
             return
 
-        env = os.environ.copy()
         env['HOSTNAME'] = HOSTNAME
         env['IP_ADDRESS'] = IP_ADDRESS
+        env['NETMASK'] = NETMASK
         env['INTERFACE_01'] = INTERFACE_01
         env['INTERFACE_02'] = INTERFACE_02
+        env['GATEWAY'] = GATEWAY
+        env['DNS_SERVERS'] = DNS_SERVERS
         env['ROOT_USER_PASSWORD'] = ROOT_USER_PASSWORD
-        
         result = subprocess.run(['bash', script_path], capture_output=True, text=True, env=env)
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
