@@ -17,18 +17,18 @@ script_urls = [
 
 # Define the paths to the marker files
 marker_paths = [
-    '/home/pinaka/tmp/script1_done',
-    '/home/pinaka/tmp/script2_done',
-    '/home/pinaka/tmp/script3_done',
-    '/home/pinaka/tmp/script4_done',
-    '/home/pinaka/tmp/script5_done',
-    '/home/pinaka/tmp/script6_done',
-    '/home/pinaka/tmp/script7_done',
-    '/home/pinaka/tmp/script8_done'
+    '/home/pinaka/tmps/script1_done',
+    '/home/pinaka/tmps/script2_done',
+    '/home/pinaka/tmps/script3_done',
+    '/home/pinaka/tmps/script4_done',
+    '/home/pinaka/tmps/script5_done',
+    '/home/pinaka/tmps/script6_done',
+    '/home/pinaka/tmps/script7_done',
+    '/home/pinaka/tmps/script8_done'
 ]
 
 # Initialize last_executed_script from a state file if it exists, otherwise start from 0
-state_file = '/home/pinaka/tmp/last_executed_script'
+state_file = '/home/pinaka/tmps/last_executed_script'
 if os.path.exists(state_file):
     with open(state_file, 'r') as f:
         last_executed_script = int(f.read().strip())
@@ -48,7 +48,7 @@ def make_executable(script_path):
 # Function to download and run a shell script
 def run_script(url, marker_path):
     if not os.path.exists(marker_path):
-        script_path = '/home/pinaka/tmp/temp_script.sh'  # Temporary path for downloaded script
+        script_path = '/home/pinaka/tmps/temp_script.sh'  # Temporary path for downloaded script
         result = subprocess.run(['curl','-s', script_path, url], capture_output=True, text=True)
         
         if result.returncode != 0:
