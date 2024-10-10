@@ -49,7 +49,7 @@ def make_executable(script_path):
 def run_script(url, marker_path):
     if not os.path.exists(marker_path):
         script_path = '/home/pinaka/tmp/temp_script.sh'  # Temporary path for downloaded script
-        result = subprocess.run(['wget', '-q', '-O', script_path, url], capture_output=True, text=True)
+        result = subprocess.run(['curl','-s', script_path, url], capture_output=True, text=True)
         
         if result.returncode != 0:
             print(f"Failed to download {url}: {result.stderr}")
