@@ -28,7 +28,7 @@ marker_paths = [
 ]
 
 # Initialize last_executed_script from a state file if it exists, otherwise start from 0
-state_file = '/tmp/last_executed_script'
+state_file = '/home/pinaka/tmp/last_executed_script'
 if os.path.exists(state_file):
     with open(state_file, 'r') as f:
         last_executed_script = int(f.read().strip())
@@ -48,7 +48,7 @@ def make_executable(script_path):
 # Function to download and run a shell script
 def run_script(url, marker_path):
     if not os.path.exists(marker_path):
-        script_path = '/tmp/temp_script.sh'  # Temporary path for downloaded script
+        script_path = '/home/pinaka/tmp/temp_script.sh'  # Temporary path for downloaded script
         result = subprocess.run(['wget', '-q', '-O', script_path, url], capture_output=True, text=True)
         
         if result.returncode != 0:
@@ -106,7 +106,7 @@ for i in range(last_executed_script, len(script_urls)):
         reboot_system()
 
 print("All scripts executed successfully.")
-OUTPUT_FILE="/etc/ceph_dashboard_credentials.txt"
+OUTPUT_FILE="/home/pinaka/all_in_one/ceph_dashboard_credentials.txt"
 
 def display_dashboard_info(output_file):
     dashboard_url = None
