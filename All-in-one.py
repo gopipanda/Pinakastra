@@ -51,7 +51,6 @@ def run_script(url, marker_path):
             print(f"Failed to download {url}: {result.stderr}")
             return
 
-        make_executable(script_path)
         env = os.environ.copy()
         env['HOSTNAME'] = HOSTNAME
         env['IP_ADDRESS'] = IP_ADDRESS
