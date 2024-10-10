@@ -5,14 +5,14 @@ import stat
 
 # Define the GitHub raw URLs for the shell scripts
 script_urls = [
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script1.sh',
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script2.sh',
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script3.sh',
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script4.sh',
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script5.sh',
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script6.sh',
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script7.sh',
-    'https://raw.githubusercontent.com/gopipanda/gopipanda/main/script8.sh'
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script1.sh',
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script2.sh',
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script3.sh',
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script4.sh',
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script5.sh',
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script6.sh',
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script7.sh',
+    'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script8.sh'
 ]
 
 # Define the paths to the marker files
