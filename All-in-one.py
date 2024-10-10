@@ -17,14 +17,14 @@ script_urls = [
 
 # Define the paths to the marker files
 marker_paths = [
-    '/tmp/script1_done',
-    '/tmp/script2_done',
-    '/tmp/script3_done',
-    '/tmp/script4_done',
-    '/tmp/script5_done',
-    '/tmp/script6_done',
-    '/tmp/script7_done',
-    '/tmp/script8_done'
+    '/home/pinaka/tmp/script1_done',
+    '/home/pinaka/tmp/script2_done',
+    '/home/pinaka/tmp/script3_done',
+    '/home/pinaka/tmp/script4_done',
+    '/home/pinaka/tmp/script5_done',
+    '/home/pinaka/tmp/script6_done',
+    '/home/pinaka/tmp/script7_done',
+    '/home/pinaka/tmp/script8_done'
 ]
 
 # Initialize last_executed_script from a state file if it exists, otherwise start from 0
