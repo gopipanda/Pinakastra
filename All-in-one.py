@@ -41,10 +41,6 @@ INTERFACE_01 = "eno1"
 INTERFACE_02 = "eno2"
 ROOT_USER_PASSWORD = "pinaka"
 
-def make_executable(script_path):
-    st = os.stat(script_path)
-    os.chmod(script_path, st.st_mode | stat.S_IEXEC)
-
 # Function to download and run a shell script
 def run_script(url, marker_path):
     if not os.path.exists(marker_path):
