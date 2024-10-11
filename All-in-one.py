@@ -47,9 +47,7 @@ ROOT_USER_PASSWORD = "pinaka"
 # Function to download and run a shell script
 def run_script(url, marker_path):
     if not os.path.exists(marker_path):
-        script_path = '/home/pinaka/tmps/temp_script.sh'  # Temporary path for downloaded script
-        result = subprocess.run(['curl','-s', script_path, url], capture_output=True, text=True)
-        
+              
         if result.returncode != 0:
             print(f"Failed to download {url}: {result.stderr}")
             return
@@ -62,7 +60,7 @@ def run_script(url, marker_path):
         env['GATEWAY'] = GATEWAY
         env['DNS_SERVERS'] = DNS_SERVERS
         env['ROOT_USER_PASSWORD'] = ROOT_USER_PASSWORD
-        result = subprocess.run(['bash', script_path], capture_output=True, text=True, env=env)
+        result = subprocess.run(['bash', '-c', f'curl -sL {script_urls}'], capture_output=True, text=True, env=env)
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
                 f.write('done')
