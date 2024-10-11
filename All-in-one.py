@@ -53,7 +53,7 @@ def run_script(url, marker_path):
         if result.returncode != 0:
             print(f"Failed to download {url}: {result.stderr}")
             return
-
+        env = os.environ.copy()
         env['HOSTNAME'] = HOSTNAME
         env['IP_ADDRESS'] = IP_ADDRESS
         env['NETMASK'] = NETMASK
