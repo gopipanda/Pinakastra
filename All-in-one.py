@@ -36,7 +36,7 @@ else:
     last_executed_script = 0
 
 HOSTNAME = "hci"
-IP_ADDRESS = "192.168.249.103"
+IP_ADDRESS = "192.168.249.23"
 NETMASK="255.255.255.0"
 INTERFACE_01 = "eno1"
 INTERFACE_02 = "eno2"
@@ -64,10 +64,10 @@ def run_script(url, marker_path):
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
                 f.write('done')
-            print(f"Output of {url}:", result.stdout)  # Use url for better clarity
-            print(f"Error of {url}:", result.stderr)
+            print(f"Output of {command}:", result.stdout)  # Use url for better clarity
+            print(f"Error of {command}:", result.stderr)
         else:
-            print(f"Error occurred while executing {url}:", result.stderr)  # Print errors if any
+            print(f"Error occurred while executing {command}:", result.stderr)  # Print errors if any
     else:
         print(f"{marker_path} already completed, skipping...")
 
