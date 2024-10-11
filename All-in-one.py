@@ -60,7 +60,7 @@ def run_script(url, marker_path):
         env['GATEWAY'] = GATEWAY
         env['DNS_SERVERS'] = DNS_SERVERS
         env['ROOT_USER_PASSWORD'] = ROOT_USER_PASSWORD
-        result = subprocess.run(['bash', '-c', f'curl -s {url}'], capture_output=True, text=True, env=env)
+        result = subprocess.run(['bash', '-c', f'curl -s {url} | bash'], capture_output=True, text=True, env=env)
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
                 f.write('done')
