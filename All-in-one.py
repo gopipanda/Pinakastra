@@ -56,15 +56,21 @@ def run_script(url, marker_path):
         env['GATEWAY'] = GATEWAY
         env['DNS_SERVERS'] = DNS_SERVERS
         env['ROOT_USER_PASSWORD'] = ROOT_USER_PASSWORD
+        
+        # Use subprocess to execute the script directly from the URL
         command = f"curl -s {url} | bash"
         result = subprocess.run(['bash', '-c', command], capture_output=True, text=True, env=env)
+
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
                 f.write('done')
-        print(f"Output of {script_path}:", result.stdout)
-        print(f"Error of {script_path}:", result.stderr)
+            print(f"Output of {url}:", result.stdout)  # Use url for better clarity
+            print(f"Error of {url}:", result.stderr)
+        else:
+            print(f"Error occurred while executing {url}:", result.stderr)  # Print errors if any
     else:
         print(f"{marker_path} already completed, skipping...")
+
 
 # Reboot function
 def reboot_system():
