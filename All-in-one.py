@@ -45,31 +45,42 @@ DNS_SERVERS="8.8.8.8 8.8.4.4"
 ROOT_USER_PASSWORD = "pinaka"
 
 # Function to download and run a shell script
+# Function to download and run a shell script with environment variables
 def run_script(url, marker_path):
     if not os.path.exists(marker_path):
+        # Define environment variables
         env = os.environ.copy()
-        env['HOSTNAME'] = HOSTNAME
-        env['IP_ADDRESS'] = IP_ADDRESS
-        env['NETMASK'] = NETMASK
-        env['INTERFACE_01'] = INTERFACE_01
-        env['INTERFACE_02'] = INTERFACE_02
-        env['GATEWAY'] = GATEWAY
-        env['DNS_SERVERS'] = DNS_SERVERS
-        env['ROOT_USER_PASSWORD'] = ROOT_USER_PASSWORD
-        
-        # Use subprocess to execute the script directly from the URL
-        command = f"curl -s {url} | bash"
-        result = subprocess.run(['bash', '-c', command], capture_output=True, text=True, env=env)
+        env.update({
+            'HOSTNAME': HOSTNAME,
+            'IP_ADDRESS': IP_ADDRESS,
+            'NETMASK': NETMASK,
+            'INTERFACE_01': INTERFACE_01,
+            'INTERFACE_02': INTERFACE_02,
+            'GATEWAY': GATEWAY,
+            'DNS_SERVERS': DNS_SERVERS,
+            'ROOT_USER_PASSWORD': ROOT_USER_PASSWORD
+        })
 
+        # Download and execute the script via curl, passing environment variables
+        command = f"curl -s {url} | bash"
+        result = subprocess.run(
+            ['bash', '-c', command], 
+            capture_output=True, 
+            text=True, 
+            env=env
+        )
+
+        # Handle the result
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
                 f.write('done')
-            print(f"Output of {url}:", result.stdout)  # Use url for better clarity
-            print(f"Error of {url}:", result.stderr)
+            print(f"Output of {url}:", result.stdout)
+            print(f"Error of {url}:", result.stderr)  # stderr might contain warnings/info
         else:
-            print(f"Error occurred while executing {command}:", result.stderr)  # Print errors if any
+            print(f"Error occurred while executing {command}:", result.stderr)
     else:
         print(f"{marker_path} already completed, skipping...")
+
 
 
 # Reboot function
