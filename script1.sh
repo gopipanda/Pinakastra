@@ -1,4 +1,4 @@
-
+#!/bin/bash
 set -x
 
 # Define variables
@@ -6,7 +6,7 @@ SERVICE_NAME="script_runner"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 GITHUB_RAW_URL="https://raw.githubusercontent.com/gopipanda/Pinakastra/main/All-in-one.py"
 LOCAL_PYTHON_SCRIPT_PATH="/home/pinaka/all_in_one/All-in-one.py"
-LOG_FILE="/var/log/${SERVICE_NAME}.log"
+LOG_FILE="/home/pinaka/log/${SERVICE_NAME}.log"
 
 # Create the service file content
 service_content="[Unit]
@@ -39,4 +39,3 @@ echo "Starting the service ${SERVICE_NAME}..."
 sudo systemctl start ${SERVICE_NAME}
 
 echo "Service ${SERVICE_NAME} created and started. Logs can be found in ${LOG_FILE}"
-
