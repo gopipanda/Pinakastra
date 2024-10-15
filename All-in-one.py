@@ -107,7 +107,7 @@ last_executed_script = read_state()
 for i in range(last_executed_script, len(script_urls)):
     run_script(script_urls[i], marker_paths[i])
     write_state(i + 1)
-    time.sleep(10)
+    time.sleep(50)
 
     # Reboot after the second script
     if i == 0 or i == 1:
