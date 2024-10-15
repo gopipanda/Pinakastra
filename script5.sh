@@ -146,9 +146,9 @@ set -x
 #   done
 # }
 
-zap_disk
-sudo cephadm shell -- ceph orch apply osd --all-available-devices --method raw
-zap_disk
+# zap_disk
+# sudo cephadm shell -- ceph orch apply osd --all-available-devices --method raw
+# zap_disk
 
 echo "Device zapping completed."
 sudo cephadm shell -- ceph orch device ls
