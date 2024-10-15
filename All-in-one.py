@@ -75,7 +75,9 @@ def run_script(url, marker_path):
             with open(marker_path, 'w') as f:
                 f.write('done\n')
                 f.write(result.stdout)  # Write stdout output to the marker file
-                f.write(result.stderr)  # Write stderr if any warnings/info exist
+                f.write(result.stderr)
+                f.flush()
+                os.fsync(f.fileno())# Write stderr if any warnings/info exist
             print(f"Output of {url}:\n{result.stdout}")
         else:
             print(f"Error occurred while executing {url}:\n{result.stderr}")
@@ -100,6 +102,8 @@ def read_state():
 def write_state(index):
     with open(state_file, 'w') as f:
         f.write(str(index))
+        f.flush()
+        os.fsync(f.fileno())
 
 # Read the last executed script index
 last_executed_script = read_state()
