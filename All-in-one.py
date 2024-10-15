@@ -76,9 +76,9 @@ def run_script(url, marker_path):
                 f.write('done\n')
                 f.write(result.stdout)  # Write stdout output to the marker file
                 f.write(result.stderr)  # Write stderr if any warnings/info exist
-            print(f"Output of {command}:\n{result.stdout}")
+            print(f"Output of {url}:\n{result.stdout}")
         else:
-            print(f"Error occurred while executing {command}:\n{result.stderr}")
+            print(f"Error occurred while executing {url}:\n{result.stderr}")
     else:
         print(f"{marker_path} already completed, skipping...")
 
