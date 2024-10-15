@@ -1,8 +1,6 @@
 #!/bin/bash
 set -ex  # Debugging and exit on error
 
-#!/bin/bash
-set -e
 
 sudo cephadm shell -- ceph osd pool create volumes
 sleep 2
