@@ -2,11 +2,11 @@ set -x
 #!/bin/bash
 
 # Accessing environment variables
-echo "Hostname: $HOSTNAME"
-echo "IP Address: $IP_ADDRESS"
-echo "Netmask: $NETMASK"
-echo "Interface 1: $INTERFACE_01"
-echo "Interface 2: $INTERFACE_02"
-echo "Gateway: $GATEWAY"
-echo "DNS Servers: $DNS_SERVERS"
-echo "Root User Password: $ROOT_USER_PASSWORD"
+source /home/pinaka/all_in_one/vpinakastra/bin/activate
+export ANSIBLE_PYTHON_INTERPRETER=/home/pinaka/all_in_one/vpinakastra/bin/python
+echo "export ANSIBLE_PYTHON_INTERPRETER=/root/vpinakastra/bin/python" >> /etc/bashrc
+cd /home/pinaka/all_in_one/vpinakastra/
+kolla-ansible -i ./all-in-one bootstrap-servers
+sudo sed -i.bak 's|^127\.0\.0\.1[[:space:]]*localhost[[:space:]]*|#127.0.0.1   localhost|' /etc/hosts
+kolla-ansible -i ./all-in-one prechecks
+kolla-ansible -i ./all-in-one deploy
