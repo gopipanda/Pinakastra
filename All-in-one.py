@@ -99,7 +99,7 @@ def read_state():
 # Function to write the current script index to the state file
 def write_state(index):
     with open(state_file, 'w') as f:
-        f.write(str(index)))
+        f.write(str(index))
 
 # Read the last executed script index
 last_executed_script = read_state()
