@@ -1,6 +1,6 @@
 #!/bin/bash
 set -ex  # Fail the script if any command fails
-
+echo "$IP_ADDRESS"
 echo "Creating volumes pool..."
 sudo cephadm shell -- ceph osd pool create volumes
 
