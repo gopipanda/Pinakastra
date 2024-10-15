@@ -74,6 +74,9 @@ def run_script(url, marker_path):
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
                 f.write('done')
+                f.write(result.stdout)
+                f.write(result.stderr)
+                f.write(result)
             print(f"Output of {command}:", result.stdout)
             print(f"Error of {command}:", result.stderr)  # stderr might contain warnings/info
         else:
@@ -107,7 +110,7 @@ last_executed_script = read_state()
 for i in range(last_executed_script, len(script_urls)):
     run_script(script_urls[i], marker_paths[i])
     write_state(i + 1)
-    time.sleep(50)
+    time.sleep(100)
 
     # Reboot after the second script
     if i == 0 or i == 1:
