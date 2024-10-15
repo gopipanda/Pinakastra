@@ -73,14 +73,12 @@ def run_script(url, marker_path):
         # Handle the result
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
-                f.write('done')
-                f.write(result.stdout)
-                f.write(result.stderr)
-                f.write(result)
-            print(f"Output of {command}:", result.stdout)
-            print(f"Error of {command}:", result.stderr)  # stderr might contain warnings/info
+                f.write('done\n')
+                f.write(result.stdout)  # Write stdout output to the marker file
+                f.write(result.stderr)  # Write stderr if any warnings/info exist
+            print(f"Output of {command}:\n{result.stdout}")
         else:
-            print(f"Error occurred while executing {command}:", result.stderr)
+            print(f"Error occurred while executing {command}:\n{result.stderr}")
     else:
         print(f"{marker_path} already completed, skipping...")
 
