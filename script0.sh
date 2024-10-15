@@ -1,5 +1,5 @@
 #!/bin/bash
-set -e  # Fail the script if any command fails
+set -ex  # Fail the script if any command fails
 
 echo "Creating volumes pool..."
 sudo cephadm shell -- ceph osd pool create volumes
