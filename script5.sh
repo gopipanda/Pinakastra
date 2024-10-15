@@ -94,57 +94,57 @@ set -x
 # # Check the Ceph version
 # sudo cephadm shell -- ceph --version
 
-MGMT_IP="$IP_ADDRESS"
-OUTPUT_FILE="/home/pinaka/all_in_one/vpinakastra/ceph_dashboard_credentials.txt"
+# MGMT_IP="$IP_ADDRESS"
+# OUTPUT_FILE="/home/pinaka/all_in_one/vpinakastra/ceph_dashboard_credentials.txt"
 
-# Simulated output from the Ceph bootstrap command
-BOOTSTRAP_OUTPUT=$(sudo cephadm bootstrap --mon-ip $MGMT_IP --allow-fqdn-hostname)
+# # Simulated output from the Ceph bootstrap command
+# BOOTSTRAP_OUTPUT=$(sudo cephadm bootstrap --mon-ip $MGMT_IP --allow-fqdn-hostname)
 
-# Extract the necessary information
-DASHBOARD_URL=$(echo "$BOOTSTRAP_OUTPUT" | grep -Po 'URL: \Khttps?://[^\s]+')
-DASHBOARD_USERNAME=$(echo "$BOOTSTRAP_OUTPUT" | grep -Po 'User: \K[^\s]+')
-DASHBOARD_PASSWORD=$(echo "$BOOTSTRAP_OUTPUT" | grep -Po 'Password: \K[^\s]+')
+# # Extract the necessary information
+# DASHBOARD_URL=$(echo "$BOOTSTRAP_OUTPUT" | grep -Po 'URL: \Khttps?://[^\s]+')
+# DASHBOARD_USERNAME=$(echo "$BOOTSTRAP_OUTPUT" | grep -Po 'User: \K[^\s]+')
+# DASHBOARD_PASSWORD=$(echo "$BOOTSTRAP_OUTPUT" | grep -Po 'Password: \K[^\s]+')
 
-# Verify that the variables are correctly populated
-echo "Extracted URL: $DASHBOARD_URL"
-echo "Extracted Username: $DASHBOARD_USERNAME"
-echo "Extracted Password: $DASHBOARD_PASSWORD"
+# # Verify that the variables are correctly populated
+# echo "Extracted URL: $DASHBOARD_URL"
+# echo "Extracted Username: $DASHBOARD_USERNAME"
+# echo "Extracted Password: $DASHBOARD_PASSWORD"
 
-# Store the extracted information in the output file
-echo "Ceph Dashboard URL: $DASHBOARD_URL" > $OUTPUT_FILE
-echo "Ceph Dashboard Username: $DASHBOARD_USERNAME" >> $OUTPUT_FILE
-echo "Ceph Dashboard Password: $DASHBOARD_PASSWORD" >> $OUTPUT_FILE
+# # Store the extracted information in the output file
+# echo "Ceph Dashboard URL: $DASHBOARD_URL" > $OUTPUT_FILE
+# echo "Ceph Dashboard Username: $DASHBOARD_USERNAME" >> $OUTPUT_FILE
+# echo "Ceph Dashboard Password: $DASHBOARD_PASSWORD" >> $OUTPUT_FILE
 
-# Verify that the information is written to the output file
-cat $OUTPUT_FILE
-zap_disk(){
-  raw_devices=$(sudo cephadm shell -- ceph orch device ls --format json-pretty)
-  echo "Raw devices output:"
-  echo "$raw_devices"
+# # Verify that the information is written to the output file
+# cat $OUTPUT_FILE
+# zap_disk(){
+#   raw_devices=$(sudo cephadm shell -- ceph orch device ls --format json-pretty)
+#   echo "Raw devices output:"
+#   echo "$raw_devices"
 
-# Parse the JSON and list all device paths
-  device_paths=$(echo "$raw_devices" | jq -r '.[] | .devices[] | .path')
-  echo "Device paths:"
-  echo "$device_paths"
+# # Parse the JSON and list all device paths
+#   device_paths=$(echo "$raw_devices" | jq -r '.[] | .devices[] | .path')
+#   echo "Device paths:"
+#   echo "$device_paths"
 
-# Filter devices based on rejection reasons and boot keyword
-  filtered_devices=$(echo "$raw_devices" | jq -r '.[] | .devices[] | select(.rejected_reasons != null and (.rejected_reasons | length > 0) and (.path | contains("boot") | not)) | .path')
-  echo "Filtered device paths:"
-  echo "$filtered_devices"
+# # Filter devices based on rejection reasons and boot keyword
+#   filtered_devices=$(echo "$raw_devices" | jq -r '.[] | .devices[] | select(.rejected_reasons != null and (.rejected_reasons | length > 0) and (.path | contains("boot") | not)) | .path')
+#   echo "Filtered device paths:"
+#   echo "$filtered_devices"
 
-  # Function to zap devices
-  zap_device() {
-    local host=$1
-    local device=$2
-    sudo cephadm shell -- ceph orch device zap $host $device --force
-  }
+#   # Function to zap devices
+#   zap_device() {
+#     local host=$1
+#     local device=$2
+#     sudo cephadm shell -- ceph orch device zap $host $device --force
+#   }
 
-# Zap filtered devices
-  for device in $filtered_devices; do
-    echo "Zapping device: $device"
-    zap_device "$HOSTNAME" "$device"
-  done
-}
+# # Zap filtered devices
+#   for device in $filtered_devices; do
+#     echo "Zapping device: $device"
+#     zap_device "$HOSTNAME" "$device"
+#   done
+# }
 
 zap_disk
 sudo cephadm shell -- ceph orch apply osd --all-available-devices --method raw
