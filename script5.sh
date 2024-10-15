@@ -94,7 +94,6 @@ sudo python3 ./cephadm install
 # Check the Ceph version
 sudo cephadm shell -- ceph --version
 
-
 MGMT_IP="$IP_ADDRESS"
 OUTPUT_FILE="/home/pinaka/all_in_one/vpinakastra/ceph_dashboard_credentials.txt"
 
