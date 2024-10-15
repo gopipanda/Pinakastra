@@ -155,9 +155,11 @@ set -x
 # sleep 10
 # sleep 10
 
-sudo cephadm shell -- ceph osd pool create volumes
+# sudo cephadm shell -- ceph osd pool create volumes
 sudo cephadm shell -- ceph osd pool create images
+sleep 30
 sudo cephadm shell -- ceph osd pool create backups
+sleep 30
 sudo cephadm shell -- ceph osd pool create vms
 sleep 10
 
