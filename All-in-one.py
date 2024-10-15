@@ -55,7 +55,7 @@ INTERFACE_01 = "eno1"
 INTERFACE_02 = "eno2"
 GATEWAY="192.168.249.1"
 DNS_SERVERS="8.8.8.8 8.8.4.4"
-ROOT_USER_PASSWORD = "pinaka"
+ROOT_USER_PASSWORD ="pinaka"
 
 # Function to download and run a shell script
 # Function to download and run a shell script with environment variables
