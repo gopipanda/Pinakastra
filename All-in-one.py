@@ -38,9 +38,13 @@ else:
 LOG_FILE = "/home/pinaka/tmps/script_runner.log"
 
 def log_to_file(message):
-    """Append messages to the central log file."""
-    with open(LOG_FILE, 'a') as f:
-        f.write(message + '\n')
+    """Append messages to the central log file with a timestamp."""
+    try:
+        with open(LOG_FILE, 'a') as f:
+            timestamp = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+            f.write(f"{timestamp} - {message}\n")
+    except Exception as e:
+        print(f"Failed to write to log file: {e}")
         
 HOSTNAME = "hci"
 IP_ADDRESS = "192.168.249.23"
