@@ -76,7 +76,7 @@ def run_script(url, marker_path):
             text=True, 
             env=env
         )
-
+        time.sleep(50)
          # Log the result centrally
         log_message = f"\n=== Executing URL: {url} ===\n"
         log_message += f"Command: {command}\n"
@@ -122,6 +122,7 @@ last_executed_script = read_state()
 
 # Execute the scripts starting from the last executed one
 for i in range(last_executed_script, len(script_urls)):
+    time.sleep(50)
     run_script(script_urls[i], marker_paths[i])
     time.sleep(50)
     write_state(i + 1)
