@@ -150,10 +150,10 @@ set -x
 # sudo cephadm shell -- ceph orch apply osd --all-available-devices --method raw
 # zap_disk
 
-echo "Device zapping completed."
-sudo cephadm shell -- ceph orch device ls
-sleep 10
-sleep 10
+# echo "Device zapping completed."
+# sudo cephadm shell -- ceph orch device ls
+# sleep 10
+# sleep 10
 
 sudo cephadm shell -- ceph osd pool create volumes
 sudo cephadm shell -- ceph osd pool create images
