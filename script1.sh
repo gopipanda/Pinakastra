@@ -11,15 +11,19 @@ LOG_FILE="/home/pinaka/log/${SERVICE_NAME}.log"
 # Create the service file content
 service_content="[Unit]
 Description=Script Runner Service
+After=network-online.target
+Wants=network-online.target
 
 [Service]
-ExecStart=/usr/bin/python3 ${LOCAL_PYTHON_SCRIPT_PATH}
-StandardOutput=append:${LOG_FILE}
-StandardError=append:${LOG_FILE}
+User=pinaka
+WorkingDirectory=/home/pinaka/tmps
+ExecStart=/usr/bin/python3 /home/pinaka/all_in_one/All-in-one.py
 Restart=on-failure
+Environment=PYTHONUNBUFFERED=1
 
 [Install]
 WantedBy=multi-user.target
+
 "
 
 # Write the service file
