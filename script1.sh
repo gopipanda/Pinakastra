@@ -7,13 +7,13 @@ SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
 GITHUB_RAW_URL="https://raw.githubusercontent.com/gopipanda/Pinakastra/main/All-in-one.py"
 LOCAL_PYTHON_SCRIPT_PATH="/home/pinaka/all_in_one/All-in-one.py"
 LOG_FILE="/home/pinaka/log/${SERVICE_NAME}.log"
-
+/usr/bin/curl -sL ${GITHUB_RAW_URL} -o ${LOCAL_PYTHON_SCRIPT_PATH}
 # Create the service file content
 service_content="[Unit]
 Description=Script Runner Service
 
 [Service]
-ExecStart=/bin/bash -c '/usr/bin/curl -sL ${GITHUB_RAW_URL} -o ${LOCAL_PYTHON_SCRIPT_PATH} && /usr/bin/python3 ${LOCAL_PYTHON_SCRIPT_PATH}'
+ExecStart=/usr/bin/python3 ${LOCAL_PYTHON_SCRIPT_PATH}
 StandardOutput=append:${LOG_FILE}
 StandardError=append:${LOG_FILE}
 Restart=on-failure
