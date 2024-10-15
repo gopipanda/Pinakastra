@@ -100,10 +100,13 @@ def read_state():
 
 # Function to write the current script index to the state file
 def write_state(index):
-    with open(state_file, 'w') as f:
-        f.write(str(index))
-        f.flush()
-        os.fsync(f.fileno())
+    try:
+        with open('/home/pinaka/tmps/last_executed_script', 'w') as f:
+            f.write(str(index))
+            f.flush()
+            os.fsync(f.fileno())
+    except PermissionError as e:
+        print(f"Permission error: {e}. Please check permissions.")
 
 # Read the last executed script index
 last_executed_script = read_state()
