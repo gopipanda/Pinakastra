@@ -82,7 +82,6 @@ def run_script(url, marker_path):
             text=True, 
             env=env
         )
-        time.sleep(50)
          # Log the result centrally
         log_message = f"\n=== Executing URL: {url} ===\n"
         log_message += f"Command: {command}\n"
