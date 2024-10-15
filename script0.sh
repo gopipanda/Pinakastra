@@ -1,17 +1,12 @@
 #!/bin/bash
-set -ex  # Fail the script if any command fails
-echo "$IP_ADDRESS"
-echo "Creating volumes pool..."
-sudo cephadm shell -- ceph osd pool create volumes
-sleep 50
-echo "Creating images pool..."
-sudo cephadm shell -- ceph osd pool create images
-sleep 50
+set -ex  # Debugging and exit on error
 
-echo "Creating backups pool..."
-sudo cephadm shell -- ceph osd pool create backups
-sleep 50
-
-echo "Creating vms pool..."
-sudo cephadm shell -- ceph osd pool create vms
-sleep 50
+sudo cephadm shell -- bash -c "
+  ceph osd pool create volumes;
+  sleep 2;
+  ceph osd pool create images;
+  sleep 2;
+  ceph osd pool create backups;
+  sleep 2;
+  ceph osd pool create vms;
+"
