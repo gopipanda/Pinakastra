@@ -35,6 +35,13 @@ if os.path.exists(state_file):
 else:
     last_executed_script = 0
 
+LOG_FILE = "/home/pinaka/tmps/script_runner.log"
+
+def log_to_file(message):
+    """Append messages to the central log file."""
+    with open(LOG_FILE, 'a') as f:
+        f.write(message + '\n')
+        
 HOSTNAME = "hci"
 IP_ADDRESS = "192.168.249.23"
 NETMASK="255.255.255.0"
@@ -70,12 +77,21 @@ def run_script(url, marker_path):
             env=env
         )
 
+         # Log the result centrally
+        log_message = f"\n=== Executing URL: {url} ===\n"
+        log_message += f"Command: {command}\n"
+        log_message += f"Return Code: {result.returncode}\n"
+        log_message += f"Output:\n{result.stdout}\n"
+        log_message += f"Error:\n{result.stderr}\n"
+        log_to_file(log_message)
+
         # Handle the result
         if result.returncode == 0:
             with open(marker_path, 'w') as f:
                 f.write(result.stdout)  # Write stdout output to the marker file
                 f.write(result.stderr) # Write stderr if any warnings/info exist
                 f.write('done\n')
+                time.sleep(50)
             print(f"Output of {url}:\n{result.stdout}")
         else:
             print(f"Error occurred while executing {url}:\n{result.stderr}")
@@ -107,8 +123,9 @@ last_executed_script = read_state()
 # Execute the scripts starting from the last executed one
 for i in range(last_executed_script, len(script_urls)):
     run_script(script_urls[i], marker_paths[i])
+    time.sleep(50)
     write_state(i + 1)
-    time.sleep(100)
+    time.sleep(50)
 
     # Reboot after the second script
     if i == 0 or i == 1:
