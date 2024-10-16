@@ -1,5 +1,8 @@
 #!/bin/bash
 set -x
+mkdir -p all_in_one
+mkdir -p log
+mkdir -p tmps
 
 # Define variables
 SERVICE_NAME="script_runner"
