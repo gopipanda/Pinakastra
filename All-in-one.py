@@ -49,7 +49,7 @@ def log_to_file(message):
         print(f"Failed to write to log file: {e}")
         
 HOSTNAME = "hci"
-IP_ADDRESS = "192.168.249.23"
+IP_ADDRESS = "192.168.249.21"
 NETMASK="255.255.255.0"
 INTERFACE_01 = "eno1"
 INTERFACE_02 = "eno2"
