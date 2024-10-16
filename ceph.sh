@@ -1,28 +1,38 @@
-# #!/bin/bash
+# Enable debugging (optional: remove 'set -x' if not needed)
 set -x
-echo "$IP_ADDRESS"
 
+# Function to check if Ceph is installed
+# Function to check if Ceph or Cephadm is available
 is_ceph_installed() {
-  if command -v ceph > /dev/null; then
+  # Check if ceph or cephadm is available directly
+  if which ceph >/dev/null 2>&1 || which cephadm >/dev/null 2>&1; then
+    echo "Ceph or Cephadm found in the system path."
     return 0
-  else
-    return 1
   fi
-}
 
+  # Check if Ceph commands are available inside cephadm shell
+  if sudo cephadm shell -- which ceph >/dev/null 2>&1; then
+    echo "Ceph found inside cephadm shell."
+    return 0
+  fi
+
+  echo "Neither Ceph nor Cephadm is installed or accessible."
+  return 1
+}
+# Function to stop and disable Ceph services
 stop_and_disable_ceph_services() {
   echo "Stopping and disabling Ceph services..."
 
   # Stop and disable ceph.target
-  sudo systemctl stop ceph.target
-  sudo systemctl disable ceph.target
+  sudo systemctl stop ceph.target || true
+  sudo systemctl disable ceph.target || true
 
   # Stop and disable individual Ceph services
   for service in ceph-mon@* ceph-osd@* ceph-mds@* ceph-mgr; do
-    if systemctl is-active --quiet $service; then
-      sudo systemctl stop $service
+    if systemctl is-active --quiet "$service"; then
+      sudo systemctl stop "$service"
     fi
-    sudo systemctl disable $service
+    sudo systemctl disable "$service" || true
   done
 }
 
@@ -32,32 +42,66 @@ remove_ceph_packages() {
   if [ -f /etc/debian_version ]; then
     sudo apt-get remove -y ceph ceph-common ceph-mon ceph-osd ceph-mgr ceph-mds
   else
-    sudo echo "Unsupported distribution. Please adjust package removal commands."
+    echo "Unsupported distribution. Please adjust package removal commands."
     exit 1
   fi
 }
 
-# Function to clean up remaining Ceph data and configuration files
+# Function to clean up Ceph data and configuration files
 cleanup_ceph_data() {
   echo "Cleaning up remaining Ceph data and configuration files..."
-  sudo rm -rf /etc/ceph
-  sudo rm -rf /var/lib/ceph
-  sudo rm -rf /var/log/ceph
-  sudo rm -rf /var/run/ceph
+  sudo rm -rf /etc/ceph /var/lib/ceph /var/log/ceph /var/run/ceph
 }
 
-# Main script
+# Function to remove Ceph cluster using FSID
+remove_ceph_cluster() {
+  local fsid=$1
+  echo "Removing Ceph cluster with FSID: $fsid"
+  sudo cephadm rm-cluster --force --fsid "$fsid"
+  echo "Ceph cluster with FSID: $fsid removed successfully."
+}
+
+# Function to find and wipe disks with Ceph signatures
+wipe_ceph_disks() {
+  echo "Checking for disks with Ceph signatures..."
+  devices=$(lsblk -no NAME,TYPE | grep disk | awk '{print "/dev/"$1}')
+
+  for dev in $devices; do
+    if sudo blkid "$dev" | grep -q 'ceph_bluestore'; then
+      echo "Found Ceph signature on $dev. Wiping the disk..."
+      sudo sgdisk --zap-all "$dev"
+      sudo dd if=/dev/zero of="$dev" bs=1M count=100 status=progress
+      sudo wipefs --all "$dev"
+      echo "$dev wiped successfully."
+    else
+      echo "No Ceph signature found on $dev."
+    fi
+  done
+}
+
+# Main script logic
 if is_ceph_installed; then
   echo "Ceph is installed. Proceeding with uninstallation..."
+
+  echo "Checking for running Ceph clusters..."
+  fsids=$(sudo cephadm shell -- ceph fsid 2>/dev/null || echo "")
+
+  if [ -z "$fsids" ]; then
+    echo "No running Ceph cluster found."
+  else
+    echo "Found Ceph cluster(s) with FSID(s): $fsids"
+    remove_ceph_cluster "$fsids"
+  fi
+
+  wipe_ceph_disks
   stop_and_disable_ceph_services
   remove_ceph_packages
   cleanup_ceph_data
-  echo "Ceph uninstallation complete."
+  echo "Ceph uninstallation and cleanup completed successfully."
 else
   echo "Ceph is not installed."
 fi
 
-sudo apt update
 
 #!/bin/bash
 Ceph_LIST="/etc/apt/sources.list.d/ceph.list"
@@ -67,9 +111,8 @@ if [[ -f "$Ceph_LIST" ]]; then
 else
     echo "No existing Ceph repository for Ubuntu found."
 fi
-sudo apt update
-
 # Set the Ceph release version
+
 CEPH_RELEASE=18.2.4
 
 # Download the cephadm script
@@ -112,38 +155,61 @@ echo "Ceph Dashboard Password: $DASHBOARD_PASSWORD" >> $OUTPUT_FILE
 
 # Verify that the information is written to the output file
 cat $OUTPUT_FILE
-zap_disk(){
-  raw_devices=$(sudo cephadm shell -- ceph orch device ls --format json-pretty)
-  echo "Raw devices output:"
-  echo "$raw_devices"
+raw_devices=$(sudo cephadm shell -- ceph orch device ls --format json-pretty)
+echo "Raw devices output:"
+echo "$raw_devices"
 
 # Parse the JSON and list all device paths
-  device_paths=$(echo "$raw_devices" | jq -r '.[] | .devices[] | .path')
-  echo "Device paths:"
-  echo "$device_paths"
+device_paths=$(echo "$raw_devices" | jq -r '.[] | .devices[] | .path')
+echo "Device paths:"
+echo "$device_paths"
 
 # Filter devices based on rejection reasons and boot keyword
-  filtered_devices=$(echo "$raw_devices" | jq -r '.[] | .devices[] | select(.rejected_reasons != null and (.rejected_reasons | length > 0) and (.path | contains("boot") | not)) | .path')
-  echo "Filtered device paths:"
-  echo "$filtered_devices"
+filtered_devices=$(echo "$raw_devices" | jq -r '.[] | .devices[] | select(.rejected_reasons != null and (.rejected_reasons | length > 0) and (.path | contains("boot") | not)) | .path')
+echo "Filtered device paths:"
+echo "$filtered_devices"
 
   # Function to zap devices
-  zap_device() {
-    local host=$1
-    local device=$2
-    sudo cephadm shell -- ceph orch device zap $host $device --force
-  }
-
-# Zap filtered devices
-  for device in $filtered_devices; do
-    echo "Zapping device: $device"
-    zap_device "$HOSTNAME" "$device"
-  done
+zap_device() {
+  local host=$1
+  local device=$2
+  sudo cephadm shell -- ceph orch device zap $host $device --force
 }
 
-zap_disk
+# Zap filtered devices
+for device in $filtered_devices; do
+  echo "Zapping device: $device"
+  zap_device "$HOSTNAME" "$device"
+done
+
 sudo cephadm shell -- ceph orch apply osd --all-available-devices --method raw
-zap_disk
+
+raw_devices=$(sudo cephadm shell -- ceph orch device ls --format json-pretty)
+echo "Raw devices output:"
+echo "$raw_devices"
+
+# Parse the JSON and list all device paths
+device_paths=$(echo "$raw_devices" | jq -r '.[] | .devices[] | .path')
+echo "Device paths:"
+echo "$device_paths"
+
+# Filter devices based on rejection reasons and boot keyword
+filtered_devices=$(echo "$raw_devices" | jq -r '.[] | .devices[] | select(.rejected_reasons != null and (.rejected_reasons | length > 0) and (.path | contains("boot") | not)) | .path')
+echo "Filtered device paths:"
+echo "$filtered_devices"
+
+  # Function to zap devices
+zap_device() {
+  local host=$1
+  local device=$2
+  sudo cephadm shell -- ceph orch device zap $host $device --force
+}
+
+# Zap filtered devices
+for device in $filtered_devices; do
+  echo "Zapping device: $device"
+  zap_device "$HOSTNAME" "$device"
+done
 
 echo "Device zapping completed."
 sudo cephadm shell -- ceph orch device ls
@@ -241,7 +307,7 @@ $HOSTNAME
 [all:vars]
 keystone_internal_port=5000
 EOF
-sudo apt update
+
 if [[ -f "$Ceph_LIST" ]]; then
     sudo rm -f "$Ceph_LIST"
     echo "Removed existing Ceph repository for Ubuntu."
