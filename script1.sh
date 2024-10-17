@@ -3,7 +3,7 @@ set -x
 mkdir -p all_in_one
 mkdir -p log
 mkdir -p tmps
-curl -s https://raw.githubusercontent.com/gopipanda/Pinakastra/main/.sh -o /home/pinaka/tmps/script.py
+curl -s https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script.py -o /home/pinaka/tmps/script.py
 # Define variables
 SERVICE_NAME="script_runner"
 SERVICE_FILE="/etc/systemd/system/${SERVICE_NAME}.service"
