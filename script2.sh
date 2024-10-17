@@ -49,6 +49,19 @@ sudo nmcli con up "$INTERFACE_02"
 
 # Wait for the interface to come up
 sleep 10
+echo "Checking for disks with Ceph signatures..."
+devices=$(lsblk -no NAME,TYPE | grep disk | awk '{print "/dev/"$1}')
 
+for dev in $devices; do
+  if sudo blkid "$dev" | grep -q 'ceph_bluestore'; then
+    echo "Found Ceph signature on $dev. Wiping the disk..."
+    sudo sgdisk --zap-all "$dev"
+    sudo dd if=/dev/zero of="$dev" bs=1M count=100 status=progress
+    sudo wipefs --all "$dev"
+    echo "$dev wiped successfully."
+  else
+    echo "No Ceph signature found on $dev."
+  fi
+done
 # Set the hostname
 sudo hostnamectl set-hostname "$HOSTNAME"
