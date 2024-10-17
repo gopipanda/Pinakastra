@@ -1,5 +1,6 @@
 set -x
 
+eval $(python3 /home/pinaka/tmps/script.py)
 
 GLOBALS_YML="/etc/kolla/globals.yml"
 
