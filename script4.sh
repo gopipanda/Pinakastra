@@ -1,5 +1,6 @@
 set -x
 #!/bin/bash
+eval $(python3 /home/pinaka/tmps/script.py)
 
 # Accessing environment variables
 echo "Hostname: $HOSTNAME"
