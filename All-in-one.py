@@ -49,10 +49,7 @@ def log_to_file(message):
         print(f"Failed to write to log file: {e}")
         
 HOSTNAME = "hci"
-IP_ADDRESS = "192.168.249.21"
 NETMASK="255.255.255.0"
-INTERFACE_01 = "eno1"
-INTERFACE_02 = "eno2"
 GATEWAY="192.168.249.1"
 DNS_SERVERS="8.8.8.8 8.8.4.4"
 ROOT_USER_PASSWORD ="pinaka"
@@ -65,10 +62,7 @@ def run_script(url, marker_path):
         env = os.environ.copy()
         env.update({
             'HOSTNAME': HOSTNAME,
-            'IP_ADDRESS': IP_ADDRESS,
             'NETMASK': NETMASK,
-            'INTERFACE_01': INTERFACE_01,
-            'INTERFACE_02': INTERFACE_02,
             'GATEWAY': GATEWAY,
             'DNS_SERVERS': DNS_SERVERS,
             'ROOT_USER_PASSWORD': ROOT_USER_PASSWORD
