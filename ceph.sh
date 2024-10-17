@@ -1,5 +1,6 @@
 # Enable debugging (optional: remove 'set -x' if not needed)
 set -x
+eval $(python3 /home/pinaka/tmps/script.py)
 
 # Function to check if Ceph is installed
 # Function to check if Ceph or Cephadm is available
