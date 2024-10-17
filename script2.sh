@@ -2,6 +2,13 @@ set -x
 #!/bin/bash
 
 # Accessing environment variables
+eval $(python3 /home/pinaka/tmps/script.py)
+
+# Now the environment variables are available
+echo "IP_ADDRESS: $IP_ADDRESS"
+echo "INTERFACE_01: $INTERFACE_01"
+echo "INTERFACE_02: $INTERFACE_02"
+
 sudo apt install -y network-manager
 
 SERVER_IP="$IP_ADDRESS"
