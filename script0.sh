@@ -1,5 +1,5 @@
 #!/bin/bash
-set -x  # Debugging and exit on error
+set -x  
 apt install speedtest-cli
 apt install htop
 apt install git
