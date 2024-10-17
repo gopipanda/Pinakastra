@@ -10,5 +10,5 @@ def load_config(json_file):
         print(f"export {key}='{value}'")
 
 if __name__ == "__main__":
-    config_file = '/home/pinaka/config.json'  # Path to your JSON config file
+    config_file = '/home/pinaka/pinak/config.json'  # Path to your JSON config file
     load_config(config_file)
