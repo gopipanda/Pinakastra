@@ -61,8 +61,6 @@ def run_script(url, marker_path):
         env.update({
             'HOSTNAME': HOSTNAME,
             'NETMASK': NETMASK,
-            'GATEWAY': GATEWAY,
-            'DNS_SERVERS': DNS_SERVERS,
             'ROOT_USER_PASSWORD': ROOT_USER_PASSWORD
         })
 
