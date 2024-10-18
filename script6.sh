@@ -5,6 +5,7 @@ eval $(python3 /home/pinaka/tmps/script.py)
 GLOBALS_YML="/etc/kolla/globals.yml"
 
 declare -A key_values=(
+  ["kolla_base_distro"]="debian"
   ["kolla_internal_vip_address"]="$IP_ADDRESS"
   ["network_interface"]="$INTERFACE_01"
   ["neutron_external_interface"]="$INTERFACE_02"
