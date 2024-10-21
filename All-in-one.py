@@ -4,7 +4,6 @@ import time
 import stat
 import datetime
 
-
 # Define the GitHub raw URLs for the shell scripts
 script_urls = [
     'https://raw.githubusercontent.com/gopipanda/Pinakastra/main/script1.sh',
@@ -52,7 +51,6 @@ HOSTNAME = "hci"
 NETMASK="255.255.255.0"
 ROOT_USER_PASSWORD ="pinaka"
 
-# Function to download and run a shell script
 # Function to download and run a shell script with environment variables
 def run_script(url, marker_path):
     if not os.path.exists(marker_path):
@@ -94,6 +92,60 @@ def run_script(url, marker_path):
         print(f"{marker_path} already completed, skipping...")
 
 
+def scp_log(marker_path):
+    def execute_and_eval_python_script(script_path):
+        result = subprocess.run(
+            ['python3', script_path],
+            capture_output=True,
+            text=True,
+            check=True
+        )
+
+        # Split the output lines and set environment variables
+        for line in result.stdout.splitlines():
+            if line.startswith("export"):
+                # Split on '=' and strip spaces
+                key_value = line[7:].split('=', 1)  # remove 'export ' and split
+                if len(key_value) == 2:
+                    key = key_value[0].strip()
+                    value = key_value[1].strip().strip("'")  # Remove extra quotes
+                    os.environ[key] = value  # Set the environment variable
+
+    # Example usage
+    script_path = '/home/pinaka/tmps/script.py'
+    execute_and_eval_python_script(script_path)
+
+    # Variables
+    FILE_PATH = marker_path  # File to be copied
+    TARGET_USER = "pinaka"  # Remote machine's username
+    PASSWORD = "pinaka"  # Password for remote user
+    TARGET_HOSTS = os.environ.get('HOST_IP_ADDRESS')  # Get the target host from the environment variable
+    REMOTE_PATH = "/home/pinaka/markers/"  # Destination path on remote machines
+
+    def copy_file(host):
+        """Function to copy the file using sshpass."""
+        original_file_name = os.path.basename(FILE_PATH)  # Extract the file name from path
+
+        print(f"Copying {FILE_PATH} to {TARGET_USER}@{host}:{REMOTE_PATH}")
+        command = [
+            'sshpass', '-p', PASSWORD,
+            'scp', '-o', 'StrictHostKeyChecking=no',
+            FILE_PATH, f"{TARGET_USER}@{host}:{REMOTE_PATH}{original_file_name}"
+        ]
+
+        try:
+            result = subprocess.run(command, check=True, capture_output=True, text=True)
+            print(f"File copied successfully to {host}: {result.stdout.strip()}")
+        except subprocess.CalledProcessError as e:
+            print(f"Failed to copy file to {host}: {e.stderr.strip()}")
+
+    # Ensure TARGET_HOSTS is set before copying
+    if TARGET_HOSTS:
+        copy_file(TARGET_HOSTS)
+    else:
+        print("IP_ADDRESS environment variable is not set.")
+
+
 
 # Reboot function
 def reboot_system():
@@ -119,6 +171,7 @@ last_executed_script = read_state()
 for i in range(last_executed_script, len(script_urls)):
     time.sleep(50)
     run_script(script_urls[i], marker_paths[i])
+    scp_log(marker_paths[i])
     time.sleep(50)
     write_state(i + 1)
     time.sleep(50)
