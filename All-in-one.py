@@ -91,61 +91,63 @@ def run_script(url, marker_path):
     else:
         print(f"{marker_path} already completed, skipping...")
 
-
-def scp_log(marker_path):
-    def execute_and_eval_python_script(script_path):
+def execute_and_eval_python_script(script_path):
+    """Execute a Python script and set environment variables from its output."""
+    try:
         result = subprocess.run(
             ['python3', script_path],
             capture_output=True,
             text=True,
             check=True
         )
+    except subprocess.CalledProcessError as e:
+        print(f"Error executing {script_path}: {e.stderr.strip()}")
+        return  # Exit if the script fails
 
-        # Split the output lines and set environment variables
-        for line in result.stdout.splitlines():
-            if line.startswith("export"):
-                # Split on '=' and strip spaces
-                key_value = line[7:].split('=', 1)  # remove 'export ' and split
-                if len(key_value) == 2:
-                    key = key_value[0].strip()
-                    value = key_value[1].strip().strip("'")  # Remove extra quotes
-                    os.environ[key] = value  # Set the environment variable
+    # Parse the output and set environment variables
+    for line in result.stdout.splitlines():
+        if line.startswith("export"):
+            key_value = line[7:].split('=', 1)  # Split "export KEY=VALUE"
+            if len(key_value) == 2:
+                key, value = key_value[0].strip(), key_value[1].strip().strip("'")
+                os.environ[key] = value  # Set the environment variable
+                print(f"Set environment variable: {key}={value}")
 
-    # Example usage
+def copy_file_to_host(file_path, target_user, password, host, remote_path):
+    """Copy a file to a remote host using sshpass."""
+    original_file_name = os.path.basename(file_path)  # Extract the file name
+
+    print(f"Copying {file_path} to {target_user}@{host}:{remote_path}{original_file_name}")
+    command = [
+        'sshpass', '-p', password,
+        'scp', '-o', 'StrictHostKeyChecking=no',
+        file_path, f"{target_user}@{host}:{remote_path}{original_file_name}"
+    ]
+
+    try:
+        result = subprocess.run(command, check=True, capture_output=True, text=True)
+        print(f"File copied successfully to {host}: {result.stdout.strip()}")
+    except subprocess.CalledProcessError as e:
+        print(f"Failed to copy file to {host}: {e.stderr.strip()}")
+        
+def scp_log(marker_path):
+    """Main function to execute a script and copy marker files to remote hosts."""
     script_path = '/home/pinaka/tmps/script.py'
-    execute_and_eval_python_script(script_path)
+    execute_and_eval_python_script(script_path)  # Run the script to set environment variables
 
-    # Variables
-    FILE_PATH = marker_path  # File to be copied
-    TARGET_USER = "pinaka"  # Remote machine's username
-    PASSWORD = "pinaka"  # Password for remote user
-    TARGET_HOSTS = os.environ.get('HOST_IP')  # Get the target host from the environment variable
-    REMOTE_PATH = "/home/pinaka/markers/"  # Destination path on remote machines
+    # Variables for SCP
+    target_user = "pinaka"
+    password = "pinaka"
+    remote_path = "/home/pinaka/markers/"
 
-    def copy_file(host):
-        """Function to copy the file using sshpass."""
-        original_file_name = os.path.basename(FILE_PATH)  # Extract the file name from path
+    # Get the host IP from the environment variable
+    target_host = os.environ.get('HOST_IP')
+    if not target_host:
+        print("HOST_IP environment variable is not set.")
+        return
 
-        print(f"Copying {FILE_PATH} to {TARGET_USER}@{host}:{REMOTE_PATH}")
-        command = [
-            'sshpass', '-p', PASSWORD,
-            'scp', '-o', 'StrictHostKeyChecking=no',
-            FILE_PATH, f"{TARGET_USER}@{host}:{REMOTE_PATH}{original_file_name}"
-        ]
-
-        try:
-            result = subprocess.run(command, check=True, capture_output=True, text=True)
-            print(f"File copied successfully to {host}: {result.stdout.strip()}")
-        except subprocess.CalledProcessError as e:
-            print(f"Failed to copy file to {host}: {e.stderr.strip()}")
-
-    # Ensure TARGET_HOSTS is set before copying
-    if TARGET_HOSTS:
-        copy_file(TARGET_HOSTS)
-    else:
-        print("IP_ADDRESS environment variable is not set.")
-
-
+    # Copy the marker file to the remote host
+    copy_file_to_host(marker_path, target_user, password, target_host, remote_path)
 
 # Reboot function
 def reboot_system():
