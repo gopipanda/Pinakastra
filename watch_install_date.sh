@@ -3,7 +3,7 @@ set -x
 eval $(python3 /home/pinaka/tmps/script.py)
 install_date_file="/home/pinaka/all_in_one/vpinakastra/.install-date"
 stop_time_file="/home/pinaka/all_in_one/vpinakastra/stop-time.txt"
-nodes=("$")  # List of nodes
+nodes=("$HOSTNAME")  # List of nodes
 
 max_uptime_seconds=$((20 * 86400))  # 20 days in seconds
 
