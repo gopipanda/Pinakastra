@@ -8,6 +8,12 @@ kolla-ansible post-deploy
 pip install python-openstackclient -c https://releases.openstack.org/constraints/upper/2023.1
 /home/pinaka/all_in_one/vpinakastra/share/kolla-ansible/init-runonce
 
+test_date=$(date)
+
+# Write the test date to the install date file
+echo "$test_date" > /root/vpinakastra/.install-date
+
+echo "Test date set to: $test_date"
 eval $(python3 /home/pinaka/tmps/script.py)
 
 SERVICE_NAME="trial_period_monitor"
