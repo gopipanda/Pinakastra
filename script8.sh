@@ -11,7 +11,7 @@ pip install python-openstackclient -c https://releases.openstack.org/constraints
 test_date=$(date)
 
 # Write the test date to the install date file
-echo "$test_date" > /root/vpinakastra/.install-date
+echo "$test_date" > /home/pinaka/all_in_one/vpinakastra/.install-date
 
 echo "Test date set to: $test_date"
 eval $(python3 /home/pinaka/tmps/script.py)
