@@ -119,7 +119,7 @@ def scp_log(marker_path):
     FILE_PATH = marker_path  # File to be copied
     TARGET_USER = "pinaka"  # Remote machine's username
     PASSWORD = "pinaka"  # Password for remote user
-    TARGET_HOSTS = os.environ.get('HOST_IP_ADDRESS')  # Get the target host from the environment variable
+    TARGET_HOSTS = os.environ.get('HOST_IP')  # Get the target host from the environment variable
     REMOTE_PATH = "/home/pinaka/markers/"  # Destination path on remote machines
 
     def copy_file(host):
